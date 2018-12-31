@@ -24,8 +24,9 @@ func Fetch(url string) ([]byte, error) {
 		err := fmt.Errorf("ERR STATUS CODE:%d", res.StatusCode)
 		return nil, err
 	}
-	e := determineEncoding(res.Body)
-	gbkReader := transform.NewReader(res.Body, e.NewEncoder())
+	bodyReader := bufio.NewReader(res.Body)
+	e := determineEncoding(bodyReader)
+	gbkReader := transform.NewReader(bodyReader, e.NewEncoder())
 	return ioutil.ReadAll(gbkReader)
 }
 func determineEncoding(r io.Reader) encoding.Encoding{
